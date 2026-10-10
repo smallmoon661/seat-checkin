@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const { ROSTERS: ROSTER_PRESETS, LABELS: ROSTER_LABELS } = require('./rosters');
 
 const app = express();
 app.use(express.json());
@@ -46,6 +47,24 @@ app.post('/api/roster', (req, res) => {
     .map((n) => n.trim())
     .filter(Boolean);
   roster = [...new Set(names)];
+  res.json({ ok: true, count: roster.length });
+});
+
+app.get('/api/roster/presets', (req, res) => {
+  const list = Object.entries(ROSTER_PRESETS).map(([key, names]) => ({
+    key,
+    label: ROSTER_LABELS[key] || key,
+    count: names.length,
+  }));
+  res.json(list);
+});
+
+app.post('/api/roster/preset', (req, res) => {
+  if (!checkAuth(req)) return res.status(401).json({ error: '密码错误' });
+  const { key } = req.body || {};
+  const names = ROSTER_PRESETS[key];
+  if (!names) return res.status(400).json({ error: '找不到这个班级' });
+  roster = [...names];
   res.json({ ok: true, count: roster.length });
 });
 

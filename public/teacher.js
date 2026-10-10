@@ -79,6 +79,37 @@ async function clearSeat(seatId) {
 
 document.getElementById('refreshBtn').addEventListener('click', loadSeats);
 
+async function loadPresetButtons() {
+  const res = await fetch('/api/roster/presets');
+  const presets = await res.json();
+  const toolbar = document.getElementById('presetToolbar');
+  toolbar.innerHTML = '';
+  presets.forEach((p) => {
+    const btn = document.createElement('button');
+    btn.textContent = `导入${p.label}（${p.count}人）`;
+    btn.addEventListener('click', async () => {
+      if (!confirm(`导入${p.label}的名单？会替换当前名单。`)) return;
+      const pwd = getPassword();
+      const r = await fetch('/api/roster/preset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Teacher-Password': pwd || '' },
+        body: JSON.stringify({ key: p.key }),
+      });
+      const data = await r.json();
+      if (r.ok) {
+        showToast(`已导入${p.label}，共 ${data.count} 人`);
+        loadRosterCount();
+      } else {
+        localStorage.removeItem('teacherPwd');
+        showToast(data.error || '导入失败');
+      }
+    });
+    toolbar.appendChild(btn);
+  });
+}
+
+loadPresetButtons();
+
 document.getElementById('exportBtn').addEventListener('click', async () => {
   const res = await fetch('/api/seats');
   const seats = await res.json();

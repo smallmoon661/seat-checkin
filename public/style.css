@@ -177,8 +177,9 @@ button:active {
   padding: 12px 16px;
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
-.toolbar button { flex: 1; }
+.toolbar button { flex: 1; min-width: 140px; }
 .toolbar button.danger { background: #d4380d; }
 .toolbar button.secondary { background: #999; }
 
