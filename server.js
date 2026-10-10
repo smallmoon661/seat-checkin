@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
+const QRCode = require('qrcode');
 const { ROSTERS: ROSTER_PRESETS, LABELS: ROSTER_LABELS } = require('./rosters');
 
 const app = express();
+app.set('trust proxy', true);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -100,6 +102,12 @@ app.delete('/api/seats/:seatId', (req, res) => {
   if (!checkAuth(req)) return res.status(401).json({ error: '密码错误' });
   delete seats[req.params.seatId];
   res.json({ ok: true });
+});
+
+app.get('/api/qrcode.png', async (req, res) => {
+  const checkinUrl = `${req.protocol}://${req.get('host')}/`;
+  res.type('png');
+  QRCode.toFileStream(res, checkinUrl, { width: 600, margin: 2 });
 });
 
 const PORT = process.env.PORT || 4000;

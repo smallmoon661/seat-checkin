@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>扫码签到</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #1d2129;
+    color: #fff;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  h1 {
+    font-size: 3vw;
+    margin-bottom: 1vw;
+  }
+  p {
+    font-size: 1.6vw;
+    color: #ccc;
+    margin-top: 1.5vw;
+  }
+  img {
+    width: min(50vh, 50vw);
+    height: min(50vh, 50vw);
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+  }
+</style>
+</head>
+<body>
+  <h1>扫码签到 · 请点击你坐的座位</h1>
+  <img src="/api/qrcode.png" alt="签到二维码" />
+  <p>微信 / 手机相机扫码打开</p>
+</body>
+</html>
