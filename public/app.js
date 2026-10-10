@@ -92,6 +92,10 @@ confirmBtn.addEventListener('click', async () => {
 async function loadSeats() {
   const res = await fetch('/api/seats');
   const seats = await res.json();
+  if (mySeat && !seats[mySeat]) {
+    mySeat = null;
+    localStorage.removeItem('mySeat');
+  }
   LAYOUT.forEach((block) => {
     for (let row = 1; row <= block.rows; row++) {
       for (let col = 1; col <= block.cols; col++) {
