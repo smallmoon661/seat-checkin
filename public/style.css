@@ -149,3 +149,23 @@ header h1 {
   content: "×";
   position: absolute;
 }
+
+.roster-panel {
+  display: none;
+  max-width: 420px;
+  margin: 0 auto 12px;
+  padding: 0 16px;
+}
+.roster-panel.show { display: block; }
+.roster-panel textarea {
+  width: 100%;
+  font-size: 14px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+#rosterCount {
+  font-size: 13px;
+  color: #666;
+}

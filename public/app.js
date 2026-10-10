@@ -98,6 +98,14 @@ async function loadSeats() {
   });
 }
 
+async function loadRoster() {
+  const res = await fetch('/api/roster');
+  const names = await res.json();
+  const list = document.getElementById('rosterList');
+  list.innerHTML = names.map((n) => `<option value="${n}"></option>`).join('');
+}
+
 buildGrid();
 loadSeats();
+loadRoster();
 setInterval(loadSeats, 3000);

@@ -13,6 +13,14 @@
   <button class="secondary" id="refreshBtn">立即刷新</button>
   <button class="danger" id="resetBtn">清空（新的一节课）</button>
 </div>
+<div class="toolbar">
+  <button class="secondary" id="toggleRosterBtn">导入名单</button>
+</div>
+<div class="roster-panel" id="rosterPanel">
+  <div id="rosterCount">当前名单：0 人</div>
+  <textarea id="rosterText" rows="6" placeholder="粘贴学生名单，每行一个名字（也支持逗号、分号分隔）"></textarea>
+  <button id="saveRosterBtn">保存名单</button>
+</div>
 <div class="legend">
   <span><span class="dot free"></span>空座位</span>
   <span><span class="dot taken"></span>已签到（点击可清除该座位）</span>

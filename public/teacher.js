@@ -79,6 +79,40 @@ async function clearSeat(seatId) {
 
 document.getElementById('refreshBtn').addEventListener('click', loadSeats);
 
+const rosterPanel = document.getElementById('rosterPanel');
+const rosterCount = document.getElementById('rosterCount');
+const rosterText = document.getElementById('rosterText');
+
+document.getElementById('toggleRosterBtn').addEventListener('click', () => {
+  rosterPanel.classList.toggle('show');
+});
+
+async function loadRosterCount() {
+  const res = await fetch('/api/roster');
+  const names = await res.json();
+  rosterCount.textContent = `当前名单：${names.length} 人`;
+}
+
+document.getElementById('saveRosterBtn').addEventListener('click', async () => {
+  const pwd = getPassword();
+  const res = await fetch('/api/roster', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Teacher-Password': pwd || '' },
+    body: JSON.stringify({ text: rosterText.value }),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showToast(`名单已保存，共 ${data.count} 人`);
+    rosterText.value = '';
+    loadRosterCount();
+  } else {
+    localStorage.removeItem('teacherPwd');
+    showToast(data.error || '保存失败');
+  }
+});
+
+loadRosterCount();
+
 document.getElementById('resetBtn').addEventListener('click', async () => {
   if (!confirm('确认清空全部座位，开始新的一节课？')) return;
   const pwd = getPassword();
