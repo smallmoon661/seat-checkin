@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>课堂签到</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header><h1>课堂签到 · 请点击你坐的座位</h1></header>
+<div class="podium">讲 台 / 黑 板</div>
+<div class="legend">
+  <span><span class="dot free"></span>空座位</span>
+  <span><span class="dot taken"></span>已签到</span>
+  <span><span class="dot mine"></span>我的座位</span>
+</div>
+<div class="classroom" id="classroom"></div>
+
+<div class="sheet" id="sheet">
+  <div class="seat-name" id="seatName"></div>
+  <input id="nameInput" type="text" placeholder="请输入你的姓名" maxlength="20" />
+  <button id="confirmBtn">确认签到</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="layout.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

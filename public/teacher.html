@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>教师端 · 座位查看</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header><h1>教师端 · 实时座位表</h1></header>
+<div class="podium">讲 台 / 黑 板</div>
+<div class="toolbar">
+  <button class="secondary" id="refreshBtn">立即刷新</button>
+  <button class="danger" id="resetBtn">清空（新的一节课）</button>
+</div>
+<div class="legend">
+  <span><span class="dot free"></span>空座位</span>
+  <span><span class="dot taken"></span>已签到（点击可清除该座位）</span>
+</div>
+<div class="classroom" id="classroom"></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="layout.js"></script>
+<script src="teacher.js"></script>
+</body>
+</html>
