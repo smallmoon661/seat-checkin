@@ -7,10 +7,54 @@ function showToast(msg, ms = 2200) {
   setTimeout(() => toast.classList.remove('show'), ms);
 }
 
-function getPassword() {
+const modalOverlay = document.getElementById('modalOverlay');
+const modalSheet = document.getElementById('modalSheet');
+const modalMessage = document.getElementById('modalMessage');
+const modalInput = document.getElementById('modalInput');
+const modalCancel = document.getElementById('modalCancel');
+const modalOk = document.getElementById('modalOk');
+
+let modalResolve = null;
+let modalHasInput = false;
+
+function openModal(message, { withInput = false } = {}) {
+  modalHasInput = withInput;
+  modalMessage.textContent = message;
+  modalInput.style.display = withInput ? 'block' : 'none';
+  modalInput.type = 'password';
+  modalInput.value = '';
+  modalOverlay.classList.add('show');
+  modalSheet.classList.add('show');
+  if (withInput) setTimeout(() => modalInput.focus(), 50);
+  return new Promise((resolve) => {
+    modalResolve = resolve;
+  });
+}
+
+function closeModal(confirmed) {
+  modalOverlay.classList.remove('show');
+  modalSheet.classList.remove('show');
+  if (modalResolve) {
+    modalResolve(confirmed ? (modalHasInput ? modalInput.value : true) : null);
+    modalResolve = null;
+  }
+}
+
+modalCancel.addEventListener('click', () => closeModal(false));
+modalOverlay.addEventListener('click', () => closeModal(false));
+modalOk.addEventListener('click', () => closeModal(true));
+modalInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') closeModal(true);
+});
+
+function showConfirm(message) {
+  return openModal(message).then((r) => r !== null);
+}
+
+async function getPassword() {
   let pwd = localStorage.getItem('teacherPwd');
   if (!pwd) {
-    pwd = prompt('请输入教师密码（只需输入一次，会保存在本机浏览器）');
+    pwd = await openModal('请输入教师密码（只需输入一次，会保存在本机浏览器）', { withInput: true });
     if (pwd) localStorage.setItem('teacherPwd', pwd);
   }
   return pwd;
@@ -63,8 +107,8 @@ async function loadSeats() {
 async function clearSeat(seatId) {
   const el = document.getElementById(`seat-${seatId}`);
   if (!el.classList.contains('taken')) return;
-  if (!confirm(`清除座位 ${el.title}（${el.textContent}）的签到记录？`)) return;
-  const pwd = getPassword();
+  if (!(await showConfirm(`清除座位 ${el.title}（${el.textContent}）的签到记录？`))) return;
+  const pwd = await getPassword();
   const res = await fetch(`/api/seats/${seatId}`, {
     method: 'DELETE',
     headers: { 'X-Teacher-Password': pwd || '' },
@@ -88,8 +132,8 @@ async function loadPresetButtons() {
     const btn = document.createElement('button');
     btn.textContent = `导入${p.label}（${p.count}人）`;
     btn.addEventListener('click', async () => {
-      if (!confirm(`导入${p.label}的名单？会替换当前名单。`)) return;
-      const pwd = getPassword();
+      if (!(await showConfirm(`导入${p.label}的名单？会替换当前名单。`))) return;
+      const pwd = await getPassword();
       const r = await fetch('/api/roster/preset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Teacher-Password': pwd || '' },
@@ -153,7 +197,7 @@ async function loadRosterCount() {
 }
 
 document.getElementById('saveRosterBtn').addEventListener('click', async () => {
-  const pwd = getPassword();
+  const pwd = await getPassword();
   const res = await fetch('/api/roster', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Teacher-Password': pwd || '' },
@@ -173,8 +217,8 @@ document.getElementById('saveRosterBtn').addEventListener('click', async () => {
 loadRosterCount();
 
 document.getElementById('resetBtn').addEventListener('click', async () => {
-  if (!confirm('确认清空全部座位，开始新的一节课？')) return;
-  const pwd = getPassword();
+  if (!(await showConfirm('确认清空全部座位，开始新的一节课？'))) return;
+  const pwd = await getPassword();
   const res = await fetch('/api/reset', {
     method: 'POST',
     headers: { 'X-Teacher-Password': pwd || '' },
