@@ -21,7 +21,7 @@ function buildGrid() {
   LAYOUT.forEach((block) => {
     const grid = document.createElement('div');
     grid.className = 'block';
-    grid.style.gridTemplateColumns = `repeat(${block.cols}, 44px)`;
+    grid.style.gridTemplateColumns = `repeat(${block.cols}, 64px)`;
     grid.style.gridTemplateRows = `repeat(${block.rows}, 44px)`;
     for (let row = 1; row <= block.rows; row++) {
       for (let col = 1; col <= block.cols; col++) {
