@@ -21,8 +21,8 @@ function buildGrid() {
   LAYOUT.forEach((block) => {
     const grid = document.createElement('div');
     grid.className = 'block';
-    grid.style.gridTemplateColumns = `repeat(${block.cols}, 30px)`;
-    grid.style.gridTemplateRows = `repeat(${block.rows}, 30px)`;
+    grid.style.gridTemplateColumns = `repeat(${block.cols}, 44px)`;
+    grid.style.gridTemplateRows = `repeat(${block.rows}, 44px)`;
     for (let row = 1; row <= block.rows; row++) {
       for (let col = 1; col <= block.cols; col++) {
         const seatId = `${block.zone}-${row}-${col}`;
@@ -78,6 +78,34 @@ async function clearSeat(seatId) {
 }
 
 document.getElementById('refreshBtn').addEventListener('click', loadSeats);
+
+document.getElementById('exportBtn').addEventListener('click', async () => {
+  const res = await fetch('/api/seats');
+  const seats = await res.json();
+  const rows = [['座位', '姓名']];
+  LAYOUT.forEach((block) => {
+    for (let row = 1; row <= block.rows; row++) {
+      for (let col = 1; col <= block.cols; col++) {
+        const seatId = `${block.zone}-${row}-${col}`;
+        const info = seats[seatId];
+        if (info) rows.push([seatLabel(block.zoneName, row, col), info.name]);
+      }
+    }
+  });
+  if (rows.length === 1) {
+    showToast('目前还没有学生签到');
+    return;
+  }
+  const csv = rows.map((r) => r.join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const today = new Date().toISOString().slice(0, 10);
+  a.download = `签到名单_${today}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
 
 const rosterPanel = document.getElementById('rosterPanel');
 const rosterCount = document.getElementById('rosterCount');

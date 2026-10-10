@@ -1,8 +1,10 @@
 const classroom = document.getElementById('classroom');
+const overlay = document.getElementById('overlay');
 const sheet = document.getElementById('sheet');
 const seatNameEl = document.getElementById('seatName');
 const nameInput = document.getElementById('nameInput');
 const confirmBtn = document.getElementById('confirmBtn');
+const cancelBtn = document.getElementById('cancelBtn');
 const toast = document.getElementById('toast');
 
 let pendingSeatId = null;
@@ -19,8 +21,8 @@ function buildGrid() {
   LAYOUT.forEach((block) => {
     const grid = document.createElement('div');
     grid.className = 'block';
-    grid.style.gridTemplateColumns = `repeat(${block.cols}, 30px)`;
-    grid.style.gridTemplateRows = `repeat(${block.rows}, 30px)`;
+    grid.style.gridTemplateColumns = `repeat(${block.cols}, 44px)`;
+    grid.style.gridTemplateRows = `repeat(${block.rows}, 44px)`;
     for (let row = 1; row <= block.rows; row++) {
       for (let col = 1; col <= block.cols; col++) {
         const seatId = `${block.zone}-${row}-${col}`;
@@ -49,9 +51,19 @@ function onSeatClick(seatId, zoneName, row, col) {
   pendingSeatId = seatId;
   seatNameEl.textContent = seatLabel(zoneName, row, col);
   nameInput.value = '';
+  overlay.classList.add('show');
   sheet.classList.add('show');
   nameInput.focus();
 }
+
+function closeSheet() {
+  overlay.classList.remove('show');
+  sheet.classList.remove('show');
+  pendingSeatId = null;
+}
+
+cancelBtn.addEventListener('click', closeSheet);
+overlay.addEventListener('click', closeSheet);
 
 confirmBtn.addEventListener('click', async () => {
   const name = nameInput.value.trim();
@@ -68,7 +80,7 @@ confirmBtn.addEventListener('click', async () => {
   if (res.ok) {
     mySeat = pendingSeatId;
     localStorage.setItem('mySeat', mySeat);
-    sheet.classList.remove('show');
+    closeSheet();
     showToast(`签到成功：${seatNameEl.textContent}`);
     loadSeats();
   } else {

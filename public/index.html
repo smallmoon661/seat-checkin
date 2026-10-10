@@ -16,11 +16,15 @@
 </div>
 <div class="classroom" id="classroom"></div>
 
+<div class="overlay" id="overlay"></div>
 <div class="sheet" id="sheet">
   <div class="seat-name" id="seatName"></div>
   <input id="nameInput" type="text" placeholder="请输入你的姓名" maxlength="20" list="rosterList" autocomplete="off" />
   <datalist id="rosterList"></datalist>
-  <button id="confirmBtn">确认签到</button>
+  <div class="actions">
+    <button class="secondary" id="cancelBtn">取消</button>
+    <button id="confirmBtn">确认签到</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>

@@ -6,9 +6,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const LAYOUT = [
-  { zone: 'L', rows: 6, cols: 3 },
+  { zone: 'L', rows: 7, cols: 3 },
   { zone: 'M', rows: 7, cols: 4 },
-  { zone: 'R', rows: 7, cols: 3 },
+  { zone: 'R', rows: 6, cols: 3 },
 ];
 
 function isValidSeat(seatId) {
