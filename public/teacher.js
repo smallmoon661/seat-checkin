@@ -102,6 +102,7 @@ async function loadSeats() {
       }
     }
   });
+  if (absentPanel.classList.contains('show')) loadAbsent();
 }
 
 async function clearSeat(seatId) {
@@ -122,6 +123,34 @@ async function clearSeat(seatId) {
 }
 
 document.getElementById('refreshBtn').addEventListener('click', loadSeats);
+
+const absentPanel = document.getElementById('absentPanel');
+const absentSummary = document.getElementById('absentSummary');
+const absentList = document.getElementById('absentList');
+
+async function loadAbsent() {
+  const res = await fetch('/api/absent');
+  const { label, total, absent } = await res.json();
+  absentList.innerHTML = '';
+  if (total === 0) {
+    absentSummary.textContent = '还没有导入名单，请先导入班级名单';
+    return;
+  }
+  if (absent.length === 0) {
+    absentSummary.textContent = `${label}：${total} 人已全部签到`;
+    return;
+  }
+  absentSummary.textContent = `${label}：共 ${total} 人，已签到 ${total - absent.length} 人，未签到 ${absent.length} 人`;
+  absent.forEach((name) => {
+    const span = document.createElement('span');
+    span.textContent = name;
+    absentList.appendChild(span);
+  });
+}
+
+document.getElementById('absentBtn').addEventListener('click', () => {
+  if (absentPanel.classList.toggle('show')) loadAbsent();
+});
 
 async function loadPresetButtons() {
   const res = await fetch('/api/roster/presets');
@@ -194,6 +223,7 @@ async function loadRosterCount() {
   const res = await fetch('/api/roster');
   const names = await res.json();
   rosterCount.textContent = `当前名单：${names.length} 人`;
+  if (absentPanel.classList.contains('show')) loadAbsent();
 }
 
 document.getElementById('saveRosterBtn').addEventListener('click', async () => {

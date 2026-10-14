@@ -26,6 +26,7 @@ function isValidSeat(seatId) {
 
 let seats = {}; // seatId -> { name, time }
 let roster = []; // list of allowed names, empty = not imported yet
+let rosterLabel = ''; // which class the current roster belongs to
 
 const TEACHER_PASSWORD = process.env.TEACHER_PASSWORD || 'teacher123';
 
@@ -49,7 +50,14 @@ app.post('/api/roster', (req, res) => {
     .map((n) => n.trim())
     .filter(Boolean);
   roster = [...new Set(names)];
+  rosterLabel = '手动导入的名单';
   res.json({ ok: true, count: roster.length });
+});
+
+app.get('/api/absent', (req, res) => {
+  const present = new Set(Object.values(seats).map((v) => v.name));
+  const absent = roster.filter((n) => !present.has(n));
+  res.json({ label: rosterLabel, total: roster.length, absent });
 });
 
 app.get('/api/roster/presets', (req, res) => {
@@ -67,6 +75,7 @@ app.post('/api/roster/preset', (req, res) => {
   const names = ROSTER_PRESETS[key];
   if (!names) return res.status(400).json({ error: '找不到这个班级' });
   roster = [...names];
+  rosterLabel = ROSTER_LABELS[key] || key;
   res.json({ ok: true, count: roster.length });
 });
 
